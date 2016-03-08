@@ -92,6 +92,8 @@
 
     var defaultScrollHandler;
 
+    var lockLeave = false;
+
     $.fn.fullpage = function(options) {
         //only once my friend!
         if($('html').hasClass(ENABLED)){ displayWarnings(); return };
@@ -164,7 +166,8 @@
             afterResize: null,
             afterReBuild: null,
             afterSlideLoad: null,
-            onSlideLeave: null
+            onSlideLeave: null,
+            lastOnLeave: null
         }, options);
 
         displayWarnings();
@@ -334,7 +337,11 @@
             }
 
             if(next.length){
+                lockLeave = false;
                 scrollPage(next, null, false);
+            } else {
+                !lockLeave && $.isFunction( options.lastOnLeave ) && options.lastOnLeave.call();
+                lockLeave = true;
             }
         };
 
